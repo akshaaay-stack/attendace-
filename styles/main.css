@@ -1,0 +1,390 @@
+/* ==========================================================================
+   LUNAR — ENTERPRISE ATTENDANCE ECOSYSTEM
+   Theme: Cosmic Blue & Deep Purple Futuristic Academic Platform
+   JAIN (Deemed-to-be University) • School of Future Kochi
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --space-navy: #070B1A;
+  --midnight-surface: #0D1226;
+  --surface-card: rgba(13, 18, 38, 0.75);
+  --surface-card-hover: rgba(20, 28, 58, 0.85);
+  --electric-blue: #2563FF;
+  --cosmic-purple: #7C3AED;
+  --nebula-violet: #A855F7;
+  --aurora-cyan: #22D3EE;
+  --soft-white: #F8FAFC;
+  --border-subtle: #24304A;
+  --border-glow: rgba(124, 58, 237, 0.35);
+  --danger-rose: #F43F5E;
+  --warning-amber: #F59E0B;
+  --success-emerald: #10B981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--space-navy);
+  color: var(--soft-white);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Cosmic Dynamic Background */
+.cosmic-bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  background: 
+    radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.14) 0%, transparent 40%),
+    radial-gradient(circle at 85% 15%, rgba(37, 99, 255, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+    #070B1A;
+}
+
+/* Starfield canvas overlay */
+#starfield-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Glassmorphism Cards */
+.lunar-glass {
+  background: var(--surface-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(37, 99, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lunar-glass:hover {
+  border-color: rgba(124, 58, 237, 0.45);
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6), 0 0 25px -2px rgba(124, 58, 237, 0.15);
+}
+
+.lunar-glass-highlight {
+  background: linear-gradient(135deg, rgba(20, 28, 60, 0.85) 0%, rgba(13, 18, 38, 0.9) 100%);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  box-shadow: 0 0 30px -5px rgba(124, 58, 237, 0.2);
+}
+
+/* Header & Navigation */
+.lunar-nav {
+  background: rgba(7, 11, 26, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Buttons */
+.btn-lunar-primary {
+  background: linear-gradient(135deg, #2563FF 0%, #7C3AED 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 0.625rem;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(37, 99, 255, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-lunar-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+  box-shadow: 0 6px 22px rgba(124, 58, 237, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-lunar-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-lunar-outline {
+  background: rgba(13, 18, 38, 0.7);
+  border: 1px solid var(--border-subtle);
+  color: #E2E8F0;
+  font-weight: 500;
+  border-radius: 0.625rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-lunar-outline:hover {
+  background: rgba(37, 99, 255, 0.15);
+  border-color: var(--electric-blue);
+  color: #FFFFFF;
+}
+
+.btn-lunar-outline.active {
+  background: linear-gradient(135deg, rgba(37, 99, 255, 0.25) 0%, rgba(124, 58, 237, 0.3) 100%);
+  border-color: var(--aurora-cyan);
+  color: #FFFFFF;
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+}
+
+/* Badges */
+.badge-lunar {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-cyan {
+  background: rgba(34, 211, 238, 0.12);
+  color: #22D3EE;
+  border: 1px solid rgba(34, 211, 238, 0.3);
+}
+
+.badge-emerald {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-purple {
+  background: rgba(124, 58, 237, 0.15);
+  color: #C084FC;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+}
+
+.badge-amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.badge-rose {
+  background: rgba(244, 63, 94, 0.15);
+  color: #FB7185;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+/* Pulsing Status Dot */
+.pulse-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  position: relative;
+  display: inline-block;
+}
+
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 9999px;
+  animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pulse-dot-cyan { background-color: #22D3EE; }
+.pulse-dot-cyan::after { border: 2px solid #22D3EE; }
+
+.pulse-dot-emerald { background-color: #10B981; }
+.pulse-dot-emerald::after { border: 2px solid #10B981; }
+
+.pulse-dot-rose { background-color: #F43F5E; }
+.pulse-dot-rose::after { border: 2px solid #F43F5E; }
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.6); opacity: 0.2; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* Circular Progress Orbit */
+.progress-ring-circle {
+  transition: stroke-dashoffset 1s ease-in-out;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Biometric HUD Space Scanner */
+.scanner-viewport {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #050711;
+  border: 2px solid rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 35px rgba(37, 99, 255, 0.3), inset 0 0 30px rgba(124, 58, 237, 0.3);
+}
+
+.scanner-laser {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #22D3EE, #A855F7, #22D3EE, transparent);
+  box-shadow: 0 0 15px #22D3EE, 0 0 8px #A855F7;
+  animation: scan-vertical 2.2s ease-in-out infinite alternate;
+  z-index: 10;
+}
+
+.scanner-ring-outer {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 1px dashed rgba(168, 85, 247, 0.5);
+  animation: spin-clockwise 20s linear infinite;
+}
+
+.scanner-ring-inner {
+  position: absolute;
+  inset: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #22D3EE;
+  border-bottom-color: #2563FF;
+  animation: spin-counter 12s linear infinite;
+}
+
+.scanner-corner-bracket {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: #22D3EE;
+  pointer-events: none;
+}
+
+@keyframes scan-vertical {
+  0% { top: 5%; opacity: 0.8; }
+  100% { top: 92%; opacity: 0.95; }
+}
+
+@keyframes spin-clockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-counter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+/* Radar Sweep Visualization */
+.radar-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(13, 18, 38, 0.9) 0%, rgba(7, 11, 26, 0.98) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7), inset 0 0 25px rgba(37, 99, 255, 0.15);
+  overflow: hidden;
+}
+
+.radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 50%;
+  transform-origin: top left;
+  background: conic-gradient(from 0deg, rgba(34, 211, 238, 0.35) 0deg, rgba(37, 99, 255, 0.1) 45deg, transparent 90deg);
+  border-radius: 0 0 100% 0;
+  animation: radar-rotate 4s linear infinite;
+}
+
+@keyframes radar-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(7, 11, 26, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.4);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.7);
+}
+
+/* Interactive Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  background: rgba(36, 48, 74, 0.6);
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22D3EE, #2563FF);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+  border: 2px solid #FFFFFF;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Room card 3D tilt effect */
+.room-card {
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.room-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: var(--aurora-cyan);
+  box-shadow: 0 10px 25px -5px rgba(34, 211, 238, 0.2);
+}

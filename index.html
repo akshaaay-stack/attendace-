@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUNAR ✦ Enterprise Attendance Ecosystem | JAIN (Deemed-to-be University) Kochi</title>
+  <!-- Tailwind CSS Core CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            spaceNavy: '#070B1A',
+            midnightSurface: '#0D1226',
+            electricBlue: '#2563FF',
+            cosmicPurple: '#7C3AED',
+            nebulaViolet: '#A855F7',
+            auroraCyan: '#22D3EE',
+            borderSubtle: '#24304A',
+            softWhite: '#F8FAFC'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Main Cosmic Stylesheet -->
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="bg-[#070B1A] text-[#F8FAFC] antialiased selection:bg-purple-600 selection:text-white pb-20 md:pb-8">
+
+  <!-- Background Ambience & Starfield Overlay -->
+  <div class="cosmic-bg-overlay"></div>
+  <canvas id="starfield-canvas"></canvas>
+
+  <!-- ==========================================================================
+       TOP MASTHEAD: BRANDING, STATUS TELEMETRY & PORTAL CONTROLS
+       ========================================================================== -->
+  <header class="lunar-nav sticky top-0 z-40 border-b border-[#24304A]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3 relative z-10">
+      
+      <!-- Brand & University Identity -->
+      <div class="flex items-center gap-3.5">
+        <div class="bg-white/95 px-2.5 py-1 rounded-lg shadow-md border border-white/20 flex items-center justify-center">
+          <img src="assets/jain-logo.png" alt="JAIN Deemed-to-be University Kochi Logo" class="h-8 md:h-9 object-contain">
+        </div>
+        <div class="border-l border-[#24304A] pl-3">
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-base tracking-wider bg-gradient-to-r from-blue-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent">LUNAR ✦</span>
+            <span class="badge-lunar badge-purple text-[10px] py-0.5">ECOSYSTEM v2.6</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium">BCA Work Integrated • School of Future Kochi</p>
+        </div>
+      </div>
+
+      <!-- Campus Telemetry & Mode Switchers -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        
+        <!-- Live Campus & Beacon Verification Pills -->
+        <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] bg-[#0D1226]/80 border border-[#24304A] px-3 py-1.5 rounded-lg shadow-inner">
+          <span class="flex items-center gap-1.5 text-emerald-400 font-semibold">
+            <span class="pulse-dot pulse-dot-emerald"></span> CAMPUS VERIFIED
+          </span>
+          <span class="text-slate-600">|</span>
+          <span class="flex items-center gap-1.5 text-cyan-400 font-semibold">
+            <span class="pulse-dot pulse-dot-cyan"></span> EB104 DETECTED
+          </span>
+        </div>
+
+        <!-- Portal Switcher Buttons -->
+        <div class="inline-flex bg-[#0D1226] p-1 rounded-xl border border-[#24304A] shadow-lg">
+          <button id="nav-btn-student" class="btn-lunar-outline active text-xs font-semibold px-3 py-1.5 rounded-lg transition-all">
+            <i class="fa-solid fa-graduation-cap mr-1 text-cyan-400"></i> Student Portal
+          </button>
+          <button id="nav-btn-faculty" class="btn-lunar-outline text-xs font-semibold px-3 py-1.5 rounded-lg transition-all">
+            <i class="fa-solid fa-tower-broadcast mr-1 text-purple-400"></i> Faculty Command
+          </button>
+          <button id="nav-btn-practicum" class="btn-lunar-outline text-xs font-semibold px-3 py-1.5 rounded-lg transition-all hidden md:inline-flex">
+            <i class="fa-solid fa-briefcase mr-1 text-amber-400"></i> Practicum
+          </button>
+        </div>
+
+        <!-- Actions: Audio Toggle, Alerts, Profile -->
+        <div class="flex items-center gap-1.5">
+          <button id="btn-toggle-sound" class="p-2 rounded-lg bg-[#0D1226] border border-[#24304A] text-cyan-400 hover:border-cyan-400 transition" title="Toggle Sci-Fi Audio FX">
+            <i class="fa-solid fa-volume-high text-xs"></i>
+          </button>
+          <button id="btn-open-alerts" class="relative p-2 rounded-lg bg-[#0D1226] border border-[#24304A] text-purple-300 hover:border-purple-400 transition" title="Lunar Alerts">
+            <i class="fa-regular fa-bell text-xs"></i>
+            <span class="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 rounded-full text-[9px] font-bold flex items-center justify-center text-white">4</span>
+          </button>
+          <button id="btn-profile-badge" class="flex items-center gap-2 pl-2 pr-2.5 py-1 rounded-lg bg-[#0D1226] border border-[#24304A] hover:border-blue-400 transition">
+            <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-purple-500 flex items-center justify-center text-[11px] font-bold text-white shadow">A</div>
+            <span class="text-xs font-semibold text-slate-200 hidden xl:inline">Akshay</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
+
+    <!-- ========================================================================
+         VIEW 1: STUDENT PORTAL (LUNAR COMMAND CENTER)
+         ======================================================================== -->
+    <div id="view-student-portal" class="space-y-6">
+
+      <!-- Student Banner Card -->
+      <div class="lunar-glass p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="badge-lunar badge-cyan text-[10px]">
+              <i class="fa-solid fa-shield-halved"></i> BIOMETRIC AUTHENTICATED
+            </span>
+            <span class="font-mono text-xs text-slate-400">ROLL #26BCA042</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+            Good Morning, Akshay
+            <span class="text-xs font-mono font-medium text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 px-2 py-0.5 rounded-full">● Online</span>
+          </h1>
+          <p class="text-xs md:text-sm text-slate-400 mt-1 font-medium">
+            BCA Work Integrated • Semester 1 • East Block Core Campus
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="btn-quick-verify-top" class="btn-lunar-primary text-xs md:text-sm">
+            <i class="fa-solid fa-fingerprint text-cyan-300"></i> Verify Presence
+          </button>
+          <button id="btn-launch-ai-top" class="btn-lunar-outline text-xs md:text-sm border-purple-500/40 text-purple-300 hover:border-purple-400">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i> Nebula AI
+          </button>
+        </div>
+      </div>
+
+      <!-- SECTION: HERO ATTENDANCE CARD & LIVE CLASS CARD (2 COLUMNS) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- 1. HERO ATTENDANCE CARD (7 Cols) -->
+        <div class="lg:col-span-7 lunar-glass p-6 flex flex-col justify-between relative overflow-hidden border-purple-500/30">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-4 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-sm shadow-purple-500"></span>
+              <h2 class="text-xs uppercase font-mono font-bold tracking-widest text-slate-300">Academic Presence Command</h2>
+            </div>
+            <span class="badge-lunar badge-emerald">
+              <span class="pulse-dot pulse-dot-emerald"></span> STATUS: SAFE
+            </span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center gap-6 py-2">
+            
+            <!-- Circular Cosmic Progress Ring (76.4%) -->
+            <div class="relative w-40 h-40 flex-shrink-0 flex items-center justify-center">
+              <svg class="w-full h-full" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="#1E293B" stroke-width="9" />
+                <circle id="hero-progress-circle" class="progress-ring-circle" cx="60" cy="60" r="50" fill="none" 
+                        stroke="url(#cosmicGradient)" stroke-width="9" stroke-linecap="round"
+                        stroke-dasharray="314.159" stroke-dashoffset="74.14" />
+                <defs>
+                  <linearGradient id="cosmicGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#22D3EE" />
+                    <stop offset="50%" stop-color="#2563FF" />
+                    <stop offset="100%" stop-color="#A855F7" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span id="hero-stat-percentage" class="text-3xl font-black font-mono tracking-tight bg-gradient-to-r from-cyan-300 via-white to-purple-300 bg-clip-text text-transparent">76.4%</span>
+                <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider mt-0.5">Overall</span>
+              </div>
+            </div>
+
+            <!-- Detailed Indicators -->
+            <div class="flex-1 w-full space-y-3">
+              <div>
+                <div class="text-sm font-semibold text-slate-200">Aggregate Academic Standing</div>
+                <div class="text-xs text-slate-400 font-mono mt-0.5">19 / 25 Classes Attended • Target: 75.0%</div>
+              </div>
+
+              <!-- 3 Intelligent Indicators -->
+              <div class="grid grid-cols-3 gap-2 pt-1">
+                <div class="bg-[#070B1A]/80 border border-[#24304A] p-2.5 rounded-lg text-center">
+                  <div class="text-[9px] font-mono uppercase text-slate-400">Current Status</div>
+                  <div class="text-xs font-bold font-mono text-emerald-400 mt-1">SAFE</div>
+                </div>
+                <div class="bg-[#070B1A]/80 border border-[#24304A] p-2.5 rounded-lg text-center">
+                  <div class="text-[9px] font-mono uppercase text-slate-400">Bunk Budget</div>
+                  <div class="text-xs font-bold font-mono text-cyan-300 mt-1">1 Period</div>
+                </div>
+                <div class="bg-[#070B1A]/80 border border-[#24304A] p-2.5 rounded-lg text-center">
+                  <div class="text-[9px] font-mono uppercase text-slate-400">Recovery Req.</div>
+                  <div class="text-xs font-bold font-mono text-purple-300 mt-1">0 Classes</div>
+                </div>
+              </div>
+
+              <button id="btn-jump-intelligence" class="w-full text-xs font-semibold py-2 px-3 rounded-lg bg-purple-950/40 border border-purple-500/40 text-purple-200 hover:bg-purple-900/50 hover:border-purple-400 transition flex items-center justify-center gap-1.5">
+                VIEW ATTENDANCE INTELLIGENCE <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. LIVE CLASS CARD (5 Cols) -->
+        <div class="lg:col-span-5 lunar-glass lunar-glass-highlight p-6 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-3 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="pulse-dot pulse-dot-rose"></span>
+              <span class="text-xs uppercase font-mono font-bold tracking-widest text-rose-400">LIVE SESSION</span>
+            </div>
+            <div class="flex items-center gap-1.5 font-mono text-xs text-cyan-300 bg-cyan-950/40 border border-cyan-500/30 px-2 py-0.5 rounded">
+              <i class="fa-regular fa-clock text-[10px]"></i> Window: <span id="live-timer-countdown" class="font-bold text-amber-300">00:47</span>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="badge-lunar badge-purple text-[10px]">EB104</span>
+                <span class="text-xs text-slate-400 font-mono">09:00 — 09:50</span>
+              </div>
+              <h3 class="text-lg md:text-xl font-bold text-white mt-1">Cloud Infrastructure & DevOps</h3>
+              <p class="text-xs text-slate-400">Faculty: Dr. Arvind Menon • East Block Core Sandbox</p>
+            </div>
+
+            <!-- Verification Checkpoints -->
+            <div class="flex items-center justify-between bg-[#070B1A]/80 border border-[#24304A] p-2.5 rounded-lg font-mono text-[11px]">
+              <span id="chk-face" class="text-emerald-400 flex items-center gap-1">
+                <i class="fa-solid fa-circle-check"></i> FACE ✓
+              </span>
+              <span class="text-slate-600">•</span>
+              <span id="chk-loc" class="text-emerald-400 flex items-center gap-1">
+                <i class="fa-solid fa-circle-check"></i> LOCATION ✓
+              </span>
+              <span class="text-slate-600">•</span>
+              <span id="chk-beacon" class="text-emerald-400 flex items-center gap-1">
+                <i class="fa-solid fa-circle-check"></i> BEACON ✓
+              </span>
+            </div>
+
+            <!-- CTA Button -->
+            <div id="live-presence-action-container">
+              <button id="btn-open-scanner-modal" class="w-full btn-lunar-primary py-3 text-sm font-bold tracking-wide shadow-lg shadow-blue-600/30">
+                <i class="fa-solid fa-expand text-cyan-300 mr-1"></i> VERIFY PRESENCE NOW
+              </button>
+            </div>
+          </div>
+
+          <div class="text-[10px] text-center font-mono text-slate-400 mt-3 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-satellite-dish text-cyan-400"></i> Micro-Geofence Radius: 1.8m Active
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECTION: "CAN I BUNK?" BUNK INTELLIGENCE & RECOVERY RADAR -->
+      <div id="section-intelligence" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- 1. "CAN I BUNK?" SIGNATURE FEATURE (7 Cols) -->
+        <div class="lg:col-span-7 lunar-glass p-6 space-y-4 border-blue-500/30">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-cyan-400 font-bold">✦</span>
+              <h2 class="text-xs uppercase font-mono font-bold tracking-widest text-slate-200">BUNK INTELLIGENCE CALCULATOR</h2>
+            </div>
+            <select id="bunk-subject-selector" class="bg-[#070B1A] border border-[#24304A] text-xs font-mono text-cyan-300 rounded-md px-2.5 py-1 outline-none focus:border-cyan-400">
+              <option value="cloud-devops">Cloud Infrastructure & DevOps</option>
+              <option value="data-structures">Data Structures & Algorithms</option>
+              <option value="full-stack">Full Stack Web Engineering</option>
+              <option value="database">Database Systems</option>
+              <option value="mathematics">Discrete Mathematics</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="bg-[#070B1A]/80 border border-[#24304A] p-3 rounded-lg text-center">
+              <div class="text-[10px] font-mono uppercase text-slate-400">Current Standing</div>
+              <div id="bunk-stat-current" class="text-xl font-bold font-mono text-white mt-1">76.0%</div>
+              <div class="text-[10px] text-slate-500 font-mono mt-0.5">19/25 Attended</div>
+            </div>
+            <div class="bg-[#070B1A]/80 border border-emerald-500/30 p-3 rounded-lg text-center">
+              <div class="text-[10px] font-mono uppercase text-emerald-400">If You Attend</div>
+              <div id="bunk-stat-attend" class="text-xl font-bold font-mono text-emerald-300 mt-1">79.0%</div>
+              <div class="text-[10px] text-emerald-500 font-mono mt-0.5">+3.0% Gain</div>
+            </div>
+            <div class="bg-[#070B1A]/80 border border-rose-500/30 p-3 rounded-lg text-center">
+              <div class="text-[10px] font-mono uppercase text-rose-400">If You Bunk</div>
+              <div id="bunk-stat-bunk" class="text-xl font-bold font-mono text-rose-300 mt-1">73.0%</div>
+              <div class="text-[10px] text-rose-500 font-mono mt-0.5">-3.0% Loss</div>
+            </div>
+          </div>
+
+          <!-- Result Advisory Banner -->
+          <div id="bunk-advisory-banner" class="bg-amber-950/40 border border-amber-500/40 p-3.5 rounded-lg flex items-start gap-3">
+            <div class="text-amber-400 text-lg mt-0.5">⚠️</div>
+            <div>
+              <div class="text-xs font-mono font-bold uppercase tracking-wider text-amber-300">RESULT ADVISORY</div>
+              <p id="bunk-advisory-text" class="text-xs text-slate-200 mt-0.5 leading-relaxed">
+                Skipping this period will push your attendance to <strong class="text-rose-400">73.0%</strong>, which falls below the university's <strong>75.0% mandatory requirement</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 pt-1">
+            <button id="btn-attend-recommendation" class="flex-1 btn-lunar-primary text-xs py-2.5">
+              <i class="fa-solid fa-check mr-1"></i> [ ATTEND THIS PERIOD ]
+            </button>
+            <button id="btn-simulate-modal-open" class="btn-lunar-outline text-xs py-2.5 px-3">
+              <i class="fa-solid fa-sliders mr-1 text-cyan-400"></i> Multi-Day Sim
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. RECOVERY RADAR (5 Cols) -->
+        <div class="lg:col-span-5 lunar-glass p-6 space-y-4 border-purple-500/30">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm shadow-rose-500"></span>
+              <h2 class="text-xs uppercase font-mono font-bold tracking-widest text-slate-200">RECOVERY RADAR</h2>
+            </div>
+            <span class="badge-lunar badge-rose">69.2% CRITICAL</span>
+          </div>
+
+          <div>
+            <div class="text-sm font-bold text-white">Discrete Mathematics & Logic</div>
+            <p class="text-xs text-slate-400 font-mono">Current: 18/26 classes • Target: 75.0%</p>
+          </div>
+
+          <!-- Step-by-Step Visual Pathway -->
+          <div class="bg-[#070B1A]/90 border border-[#24304A] p-4 rounded-xl space-y-3 font-mono text-xs">
+            <div class="flex items-center justify-between text-slate-400">
+              <span>CURRENT STANDING</span>
+              <span class="text-rose-400 font-bold">69.2%</span>
+            </div>
+            
+            <div class="space-y-2 border-l-2 border-purple-500/40 pl-3.5 my-2">
+              <div class="flex items-center justify-between text-slate-300">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> ● Period 1 Attend</span>
+                <span class="text-cyan-300">70.4%</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-300">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400"></span> ● Period 2 Attend</span>
+                <span class="text-cyan-300">72.4%</span>
+              </div>
+              <div class="flex items-center justify-between text-emerald-400 font-bold">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> ● Period 3 Attend</span>
+                <span class="text-emerald-400">75.0% ✓</span>
+              </div>
+            </div>
+
+            <div class="border-t border-[#24304A] pt-2.5 flex items-center justify-between text-cyan-300 font-bold">
+              <span>TARGET ELIGIBILITY</span>
+              <span class="badge-lunar badge-emerald">3 Consecutive Required</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECTION: ATTENDANCE GALAXY & COSMIC TIMETABLE -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- 1. ATTENDANCE GALAXY (7 Cols) -->
+        <div class="lg:col-span-7 lunar-glass p-6 space-y-4 border-cyan-500/30">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-purple-400">✦</span>
+                <h2 class="text-xs uppercase font-mono font-bold tracking-widest text-slate-200">ATTENDANCE UNIVERSE</h2>
+              </div>
+              <p class="text-[11px] text-slate-400 font-mono mt-0.5">Orbital Subject Visualization • Proximity to 75% Orbit Threshold</p>
+            </div>
+            <span class="badge-lunar badge-purple">5 ORBITS</span>
+          </div>
+
+          <!-- Orbital Galaxy Visualizer Canvas / Interactive Map -->
+          <div class="relative w-full aspect-[16/9] bg-[#050711] border border-[#24304A] rounded-xl overflow-hidden flex items-center justify-center">
+            <canvas id="galaxy-orbit-canvas" width="600" height="340" class="w-full h-full cursor-pointer"></canvas>
+            
+            <div class="absolute bottom-2 left-2 flex items-center gap-2 bg-[#070B1A]/80 border border-[#24304A] px-2.5 py-1 rounded text-[10px] font-mono text-slate-400">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Safe Orbit (&gt;75%)
+              <span class="w-2 h-2 rounded-full bg-rose-400 ml-2"></span> Risk Orbit (&lt;75%)
+            </div>
+          </div>
+
+          <!-- Subject Pill Legend -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 font-mono text-xs">
+            <div class="bg-[#070B1A] border border-purple-500/30 p-2 rounded-lg flex items-center justify-between">
+              <span class="text-purple-300">🟣 Cloud DevOps</span>
+              <span class="font-bold text-white">76%</span>
+            </div>
+            <div class="bg-[#070B1A] border border-blue-500/30 p-2 rounded-lg flex items-center justify-between">
+              <span class="text-blue-300">🔵 Data Struct.</span>
+              <span class="font-bold text-emerald-400">91%</span>
+            </div>
+            <div class="bg-[#070B1A] border border-fuchsia-500/30 p-2 rounded-lg flex items-center justify-between">
+              <span class="text-fuchsia-300">🟣 Full Stack</span>
+              <span class="font-bold text-white">84%</span>
+            </div>
+            <div class="bg-[#070B1A] border border-cyan-500/30 p-2 rounded-lg flex items-center justify-between">
+              <span class="text-cyan-300">🔵 Database</span>
+              <span class="font-bold text-white">79%</span>
+            </div>
+            <div class="bg-[#070B1A] border border-rose-500/30 p-2 rounded-lg flex items-center justify-between col-span-2 sm:col-span-1">
+              <span class="text-rose-300">🔴 Mathematics</span>
+              <span class="font-bold text-rose-400">69%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. COSMIC TIMETABLE (5 Cols) -->
+        <div class="lg:col-span-5 lunar-glass p-6 space-y-4 border-slate-700/50">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-regular fa-calendar-days text-cyan-400 text-xs"></i>
+              <h2 class="text-xs uppercase font-mono font-bold tracking-widest text-slate-200">COSMIC TIMETABLE</h2>
+            </div>
+            <span class="badge-lunar badge-cyan">TODAY</span>
+          </div>
+
+          <!-- Vertical Timeline -->
+          <div class="relative pl-6 space-y-4 border-l-2 border-[#24304A]">
+            
+            <!-- Item 1: 09:00 -->
+            <div class="relative group">
+              <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-[#070B1A]"></div>
+              <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                <span>09:00 — 09:50</span>
+                <span class="text-emerald-400 font-semibold">ATTENDED ✓</span>
+              </div>
+              <div class="text-sm font-bold text-slate-200 mt-0.5">Data Structures & Algorithms</div>
+              <div class="text-[11px] text-slate-400 font-mono">EB101 • Prof. Priya Nair</div>
+            </div>
+
+            <!-- Item 2: 09:50 -->
+            <div class="relative group">
+              <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-purple-500 border-2 border-[#070B1A]"></div>
+              <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                <span>09:50 — 10:40</span>
+                <span class="text-emerald-400 font-semibold">ATTENDED ✓</span>
+              </div>
+              <div class="text-sm font-bold text-slate-200 mt-0.5">Full Stack Web Engineering</div>
+              <div class="text-[11px] text-slate-400 font-mono">EB102 • Prof. Rohit Varma</div>
+            </div>
+
+            <!-- Break: 10:40 -->
+            <div class="relative group">
+              <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-cyan-400 border-2 border-[#070B1A]"></div>
+              <div class="text-xs font-mono text-cyan-300 font-semibold">10:40 ✦ BREAK / RECHARGE</div>
+            </div>
+
+            <!-- Item 3: 11:00 LIVE -->
+            <div class="relative group bg-purple-950/30 p-3 rounded-lg border border-purple-500/40">
+              <div class="absolute -left-[31px] top-3.5 w-3.5 h-3.5 rounded-full bg-rose-500 animate-ping border-2 border-[#070B1A]"></div>
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-rose-400 font-bold">11:00 — 11:50</span>
+                <span class="badge-lunar badge-rose text-[9px]">LIVE SESSION</span>
+              </div>
+              <div class="text-sm font-bold text-white mt-1">Cloud Infrastructure & DevOps</div>
+              <div class="text-[11px] text-purple-300 font-mono">EB104 • Dr. Arvind Menon</div>
+            </div>
+
+            <!-- Item 4: 11:50 -->
+            <div class="relative group">
+              <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-slate-600 border-2 border-[#070B1A]"></div>
+              <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                <span>11:50 — 12:40</span>
+                <span class="text-slate-500">UPCOMING</span>
+              </div>
+              <div class="text-sm font-bold text-slate-300 mt-0.5">Database Systems</div>
+              <div class="text-[11px] text-slate-400 font-mono">EB103 • Dr. Lakshmi S.</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================================
+         VIEW 2: FACULTY COMMAND PORTAL (/portal/faculty)
+         ======================================================================== -->
+    <div id="view-faculty-portal" class="space-y-6 hidden">
+      
+      <!-- Faculty Mission Control Masthead -->
+      <div class="lunar-glass p-5 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="badge-lunar badge-purple text-[10px]">
+              <i class="fa-solid fa-satellite-dish"></i> LUNAR COMMAND CENTER
+            </span>
+            <span class="font-mono text-xs text-slate-400">FACULTY TELEMETRY CONTROLLER</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white">East Block Live Operations</h1>
+          <p class="text-xs md:text-sm text-slate-400 mt-1 font-mono">5 Active Sandbox Environments • BLE Beacons Sync: 100%</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="btn-trigger-rollcall" class="btn-lunar-primary text-xs py-2.5">
+            <i class="fa-solid fa-bullhorn text-cyan-300"></i> Trigger 90s Roll-Call
+          </button>
+          <button id="btn-lock-all-rooms" class="btn-lunar-outline text-xs py-2.5">
+            <i class="fa-solid fa-lock text-rose-400"></i> Lock All Sessions
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
+        <div class="lunar-glass p-4 text-center">
+          <div class="text-[10px] uppercase text-slate-400">Total Present Cohort</div>
+          <div class="text-2xl font-bold text-cyan-300 mt-1">271 / 300</div>
+          <div class="text-[10px] text-emerald-400 mt-0.5">90.3% Overall</div>
+        </div>
+        <div class="lunar-glass p-4 text-center border-rose-500/30">
+          <div class="text-[10px] uppercase text-slate-400">Anomalies Intercepted</div>
+          <div class="text-2xl font-bold text-rose-400 mt-1">3 Proxies</div>
+          <div class="text-[10px] text-rose-500 mt-0.5">100% Blocked</div>
+        </div>
+        <div class="lunar-glass p-4 text-center">
+          <div class="text-[10px] uppercase text-slate-400">Active BLE Beacons</div>
+          <div class="text-2xl font-bold text-purple-300 mt-1">5 / 5</div>
+          <div class="text-[10px] text-slate-400 mt-0.5">-58 dBm Avg RSSI</div>
+        </div>
+        <div class="lunar-glass p-4 text-center">
+          <div class="text-[10px] uppercase text-slate-400">Active Verification</div>
+          <div class="text-2xl font-bold text-emerald-400 mt-1">EB104</div>
+          <div class="text-[10px] text-amber-300 mt-0.5">Roll-call in progress</div>
+        </div>
+      </div>
+
+      <!-- SECTION: EAST BLOCK LIVE MAP & ANOMALY RADAR -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- 1. EAST BLOCK LIVE MAP (7 Cols) -->
+        <div class="lg:col-span-7 lunar-glass p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-cyan-400"></i>
+              <h2 class="text-xs uppercase font-mono font-bold tracking-widest text-slate-200">EAST BLOCK 3D ARCHITECTURE MAP</h2>
+            </div>
+            <span class="badge-lunar badge-cyan">CLICK ROOM FOR ROSTER</span>
+          </div>
+
+          <!-- Interactive Room Grid Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            
+            <!-- EB101 -->
+            <div class="room-card bg-[#070B1A] border border-[#24304A] p-4 rounded-xl flex flex-col justify-between" onclick="showRoomRoster('EB101')">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-base">EB101</span>
+                <span class="badge-lunar badge-purple text-[9px]">LOCKED</span>
+              </div>
+              <div class="my-3">
+                <div class="text-2xl font-bold font-mono text-cyan-300">58 / 60</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">Data Structures</div>
+              </div>
+              <div class="text-[10px] font-mono text-emerald-400">● 0 Anomalies</div>
+            </div>
+
+            <!-- EB102 -->
+            <div class="room-card bg-[#070B1A] border border-[#24304A] p-4 rounded-xl flex flex-col justify-between" onclick="showRoomRoster('EB102')">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-base">EB102</span>
+                <span class="badge-lunar badge-emerald text-[9px]">ACTIVE</span>
+              </div>
+              <div class="my-3">
+                <div class="text-2xl font-bold font-mono text-cyan-300">54 / 60</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">Full Stack Web</div>
+              </div>
+              <div class="text-[10px] font-mono text-amber-400">● 1 Mismatch Blocked</div>
+            </div>
+
+            <!-- EB103 -->
+            <div class="room-card bg-[#070B1A] border border-[#24304A] p-4 rounded-xl flex flex-col justify-between" onclick="showRoomRoster('EB103')">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-base">EB103</span>
+                <span class="badge-lunar badge-purple text-[9px]">LOCKED</span>
+              </div>
+              <div class="my-3">
+                <div class="text-2xl font-bold font-mono text-cyan-300">60 / 60</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">Database Systems</div>
+              </div>
+              <div class="text-[10px] font-mono text-emerald-400">● 100% Verified</div>
+            </div>
+
+            <!-- EB104 LIVE -->
+            <div class="room-card bg-purple-950/40 border border-purple-500 p-4 rounded-xl flex flex-col justify-between shadow-lg shadow-purple-900/30" onclick="showRoomRoster('EB104')">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-base">EB104</span>
+                <span class="badge-lunar badge-rose text-[9px]">⚠ 18 ABSENT</span>
+              </div>
+              <div class="my-3">
+                <div class="text-2xl font-bold font-mono text-rose-300">42 / 60</div>
+                <div class="text-[10px] text-purple-200 mt-0.5">Cloud Infrastructure</div>
+              </div>
+              <div class="text-[10px] font-mono text-rose-400 animate-pulse">● Roll-Call Live Window</div>
+            </div>
+
+            <!-- EB105 -->
+            <div class="room-card bg-[#070B1A] border border-[#24304A] p-4 rounded-xl flex flex-col justify-between" onclick="showRoomRoster('EB105')">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-white text-base">EB105</span>
+                <span class="badge-lunar badge-emerald text-[9px]">ACTIVE</span>
+              </div>
+              <div class="my-3">
+                <div class="text-2xl font-bold font-mono text-cyan-300">57 / 60</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">Discrete Mathematics</div>
+              </div>
+              <div class="text-[10px] font-mono text-emerald-400">● Safe Operations</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 2. ANTI-PROXY ANOMALY RADAR (5 Cols) -->
+        <div class="lg:col-span-5 lunar-glass p-6 space-y-4 border-rose-500/30">
+          <div class="flex items-center justify-between border-b border-[#24304A] pb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-radar text-rose-400"></i>
+              <h2 class="text-xs uppercase font-mono font-bold tracking-widest text-slate-200">ANOMALY RADAR & INTERCEPTOR</h2>
+            </div>
+            <span class="badge-lunar badge-rose">LIVE RADAR</span>
+          </div>
+
+          <!-- Radar Canvas -->
+          <div class="radar-container">
+            <canvas id="proxy-radar-canvas" width="320" height="320" class="w-full h-full"></canvas>
+            <div class="radar-sweep"></div>
+          </div>
+
+          <!-- Feed of Blocked Anomalies -->
+          <div class="space-y-2 font-mono text-xs">
+            <div class="bg-rose-950/40 border border-rose-500/40 p-2.5 rounded-lg flex items-center justify-between">
+              <div>
+                <div class="font-bold text-rose-300">ROLL #042 INTERCEPT</div>
+                <div class="text-[10px] text-slate-400">Spatial anomaly • 48m from EB104</div>
+              </div>
+              <span class="badge-lunar badge-rose">BLOCKED</span>
+            </div>
+            <div class="bg-[#070B1A] border border-[#24304A] p-2.5 rounded-lg flex items-center justify-between">
+              <div>
+                <div class="font-bold text-amber-300">GPS SPOOF PREVENTED</div>
+                <div class="text-[10px] text-slate-400">Roll #077 • Mock provider disabled</div>
+              </div>
+              <span class="badge-lunar badge-amber">FLAGGED</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================================
+         VIEW 3: PRACTICUM WORKSTREAM PORTAL (/portal/practicum)
+         ======================================================================== -->
+    <div id="view-practicum-portal" class="space-y-6 hidden">
+      
+      <div class="lunar-glass p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="badge-lunar badge-amber text-[10px]">
+              <i class="fa-solid fa-briefcase"></i> BCA WORK INTEGRATED WORKSTREAM
+            </span>
+            <span class="font-mono text-xs text-slate-400">INDUSTRY PRACTICUM</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white">CognitiveX Labs • Kochi Infopark</h1>
+          <p class="text-xs md:text-sm text-slate-400 font-mono mt-0.5">Role: Junior Cloud Infrastructure Associate • Shift: 13:30 — 21:30</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="btn-practicum-clockout" class="btn-lunar-outline text-xs text-rose-300 border-rose-500/40">
+            <i class="fa-solid fa-stop mr-1"></i> End Shift Break
+          </button>
+          <button id="btn-practicum-verify" class="btn-lunar-primary text-xs">
+            <i class="fa-solid fa-fingerprint mr-1"></i> Re-Verify Workzone
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-mono">
+        <div class="lunar-glass p-6 text-center border-amber-500/30">
+          <div class="text-xs uppercase text-slate-400">Current Shift Active Stopwatch</div>
+          <div id="practicum-live-stopwatch" class="text-3xl font-extrabold text-amber-300 my-2">04:32:18</div>
+          <span class="badge-lunar badge-emerald">ACTIVE SHIFT</span>
+        </div>
+
+        <div class="lunar-glass p-6 text-center">
+          <div class="text-xs uppercase text-slate-400">Today's Accumulated Hours</div>
+          <div class="text-3xl font-extrabold text-cyan-300 my-2">4.53 / 8.00</div>
+          <div class="w-full bg-slate-800 rounded-full h-2 mt-2">
+            <div class="bg-gradient-to-r from-blue-500 to-cyan-400 h-2 rounded-full" style="width: 56.6%"></div>
+          </div>
+        </div>
+
+        <div class="lunar-glass p-6 text-center">
+          <div class="text-xs uppercase text-slate-400">Workzone Geofence Status</div>
+          <div class="text-xl font-bold text-emerald-400 my-2">ZONE 2 IN-BOUNDS</div>
+          <div class="text-xs text-slate-400">GPS ✓ • Identity ✓ • Company Zone ✓</div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL 1: LUNAR ID BIOMETRIC SPACE-SCANNER
+       ========================================================================== -->
+  <div id="modal-biometric-scanner" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
+    <div class="lunar-glass w-full max-w-md p-6 relative border-cyan-500/40 shadow-2xl shadow-cyan-900/40 animate-fade-in text-center space-y-4">
+      
+      <button id="btn-close-scanner" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div>
+        <div class="flex items-center justify-center gap-2 mb-1">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+          <span class="font-mono text-xs uppercase tracking-widest text-cyan-300 font-bold">LUNAR ID SCAN</span>
+        </div>
+        <h3 class="text-lg font-bold text-white">Biometric Presence Verification</h3>
+        <p class="text-xs text-slate-400 font-mono mt-0.5">Target: Cloud Infrastructure & DevOps (EB104)</p>
+      </div>
+
+      <!-- Holographic HUD Scanner Frame -->
+      <div class="scanner-viewport">
+        <div class="scanner-laser"></div>
+        <div class="scanner-ring-outer"></div>
+        <div class="scanner-ring-inner"></div>
+
+        <!-- Video stream or canvas wireframe -->
+        <video id="scanner-video-feed" class="w-full h-full object-cover hidden" autoplay playsinline muted></video>
+        <canvas id="scanner-hud-canvas" width="280" height="280" class="w-full h-full"></canvas>
+      </div>
+
+      <!-- Sensor Pipeline Status Indicators -->
+      <div class="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
+        <div id="sensor-liveness" class="bg-[#070B1A] border border-[#24304A] p-2 rounded-lg text-slate-400">
+          <div>LIVENESS</div>
+          <span class="sensor-val text-[10px] text-slate-500">STANDBY</span>
+        </div>
+        <div id="sensor-spatial" class="bg-[#070B1A] border border-[#24304A] p-2 rounded-lg text-slate-400">
+          <div>SPATIAL</div>
+          <span class="sensor-val text-[10px] text-slate-500">STANDBY</span>
+        </div>
+        <div id="sensor-identity" class="bg-[#070B1A] border border-[#24304A] p-2 rounded-lg text-slate-400">
+          <div>IDENTITY</div>
+          <span class="sensor-val text-[10px] text-slate-500">STANDBY</span>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="space-y-1 font-mono">
+        <div class="flex justify-between text-xs text-slate-300">
+          <span id="scan-status-text">READY FOR BIOMETRIC SCAN</span>
+          <span id="scan-progress-percentage" class="text-cyan-300 font-bold">0%</span>
+        </div>
+        <div class="w-full bg-[#1E293B] h-2 rounded-full overflow-hidden">
+          <div id="scan-progress-bar" class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 h-2 rounded-full transition-all duration-200" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-2 flex items-center gap-2">
+        <button id="btn-trigger-scan" class="flex-1 btn-lunar-primary text-sm py-2.5">
+          <i class="fa-solid fa-bolt mr-1"></i> INITIATE LUNAR SCAN
+        </button>
+        <button id="btn-toggle-camera" class="btn-lunar-outline text-xs py-2.5 px-3" title="Switch between Simulated Scan / Webcam">
+          <i class="fa-solid fa-camera"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: ROOM ROSTER INSPECTOR (FACULTY PORTAL)
+       ========================================================================== -->
+  <div id="modal-room-roster" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden p-4">
+    <div class="lunar-glass w-full max-w-2xl p-6 relative border-purple-500/40 shadow-2xl animate-fade-in space-y-4 max-h-[90vh] overflow-y-auto">
+      <button id="btn-close-roster" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-3">
+        <span class="badge-lunar badge-purple text-xs" id="modal-roster-room-id">EB104</span>
+        <h3 id="modal-roster-title" class="text-lg font-bold text-white">Cloud Infrastructure & DevOps Roster</h3>
+      </div>
+
+      <div id="modal-roster-content" class="space-y-2">
+        <!-- Injected dynamic student roster list -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       DRAWER: LUNAR ALERTS (NOTIFICATIONS)
+       ========================================================================== -->
+  <div id="drawer-alerts" class="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-[#0D1226]/95 border-l border-[#24304A] backdrop-blur-2xl p-6 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between">
+    <div class="space-y-4">
+      <div class="flex items-center justify-between border-b border-[#24304A] pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+          <h3 class="text-sm uppercase font-mono font-bold tracking-wider text-white">LUNAR ALERTS</h3>
+        </div>
+        <button id="btn-close-alerts" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        
+        <!-- Alert 1 -->
+        <div class="bg-rose-950/40 border border-rose-500/40 p-3 rounded-lg space-y-1">
+          <div class="flex items-center gap-1.5 text-rose-400 font-bold">
+            <i class="fa-solid fa-triangle-exclamation"></i> Attendance Risk
+          </div>
+          <p class="text-slate-300 font-sans text-xs">Discrete Mathematics dropped to <strong>69.2%</strong>.</p>
+        </div>
+
+        <!-- Alert 2 -->
+        <div class="bg-purple-950/40 border border-purple-500/40 p-3 rounded-lg space-y-1">
+          <div class="flex items-center gap-1.5 text-purple-300 font-bold">
+            <i class="fa-solid fa-bell"></i> Class Starting
+          </div>
+          <p class="text-slate-300 font-sans text-xs">Cloud DevOps begins in 10 minutes in EB104.</p>
+        </div>
+
+        <!-- Alert 3 -->
+        <div class="bg-blue-950/40 border border-blue-500/40 p-3 rounded-lg space-y-1">
+          <div class="flex items-center gap-1.5 text-cyan-300 font-bold">
+            <i class="fa-solid fa-compass"></i> Recovery
+          </div>
+          <p class="text-slate-300 font-sans text-xs">Attend your next 3 Mathematics periods to reach 75%.</p>
+        </div>
+
+        <!-- Alert 4 -->
+        <div class="bg-emerald-950/40 border border-emerald-500/40 p-3 rounded-lg space-y-1">
+          <div class="flex items-center gap-1.5 text-emerald-400 font-bold">
+            <i class="fa-solid fa-circle-check"></i> Presence Confirmed
+          </div>
+          <p class="text-slate-300 font-sans text-xs">EB104 Period 1 successfully verified with BLE Beacon.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="border-t border-[#24304A] pt-3">
+      <button id="btn-clear-alerts" class="w-full text-xs font-mono text-slate-400 hover:text-white py-2">
+        Clear All Notifications
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       DRAWER: LUNAR AI CONVERSATION ASSISTANT
+       ========================================================================== -->
+  <div id="drawer-lunar-ai" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#070B1A]/95 border-l border-purple-500/30 backdrop-blur-2xl p-6 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between">
+    
+    <div class="flex flex-col h-full justify-between">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-[#24304A] pb-3 mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-purple-400 text-lg">✦</span>
+          <div>
+            <h3 class="text-sm font-bold text-white">NEBULA AI</h3>
+            <p class="text-[10px] text-slate-400 font-mono">Python live engine · attendance + anything</p>
+          </div>
+        </div>
+        <button id="btn-close-ai" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="ai-chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-1">
+        <!-- Initial Message -->
+        <div class="bg-purple-950/40 border border-purple-500/30 p-3.5 rounded-xl text-xs text-slate-200 leading-relaxed">
+          ✦ Greetings Akshay. I am <strong>Nebula AI</strong> (Python). I have live access to your East Block ledger, IST clock, Kochi weather, Wikipedia, and a general answer engine. Ask attendance, bunk math, or anything else.
+        </div>
+      </div>
+
+      <!-- Quick Suggestion Chips -->
+      <div class="py-2 flex flex-wrap gap-1.5">
+        <button class="ai-chip text-[10px] font-mono bg-[#0D1226] border border-[#24304A] px-2 py-1 rounded-full text-cyan-300 hover:border-cyan-400" onclick="sendQuickAiQuery('Can I bunk Cloud DevOps today?')">
+          Can I bunk Cloud DevOps?
+        </button>
+        <button class="ai-chip text-[10px] font-mono bg-[#0D1226] border border-[#24304A] px-2 py-1 rounded-full text-purple-300 hover:border-purple-400" onclick="sendQuickAiQuery('How many classes to recover Discrete Math?')">
+          Recover Math to 75%?
+        </button>
+        <button class="ai-chip text-[10px] font-mono bg-[#0D1226] border border-[#24304A] px-2 py-1 rounded-full text-amber-300 hover:border-amber-400" onclick="sendQuickAiQuery('What is my practicum status?')">
+          Practicum Shift?
+        </button>
+      </div>
+
+      <!-- Input Bar -->
+      <form id="ai-chat-form" class="flex items-center gap-2 border-t border-[#24304A] pt-3">
+        <input type="text" id="ai-chat-input" placeholder="Ask Nebula anything — attendance, weather, facts…" class="flex-1 bg-[#0D1226] border border-[#24304A] text-xs text-white rounded-lg px-3 py-2 outline-none focus:border-purple-500">
+        <button type="submit" class="btn-lunar-primary text-xs py-2 px-3">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Floating Action Button for Mobile / Quick Access -->
+  <button id="floating-btn-verify" class="fixed bottom-6 right-6 z-30 md:hidden btn-lunar-primary rounded-full w-14 h-14 shadow-2xl flex items-center justify-center text-xl shadow-blue-600/50">
+    <i class="fa-solid fa-fingerprint"></i>
+  </button>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[#070B1A]/95 border-t border-[#24304A] backdrop-blur-md px-4 py-2 flex items-center justify-around font-mono text-[10px]">
+    <button onclick="switchPortalView('student')" class="flex flex-col items-center gap-1 text-cyan-400">
+      <i class="fa-solid fa-house text-sm"></i>
+      <span>Home</span>
+    </button>
+    <button onclick="scrollToSection('section-intelligence')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white">
+      <i class="fa-solid fa-calculator text-sm"></i>
+      <span>Bunk</span>
+    </button>
+    <button onclick="toggleLunarAIDrawer(true)" class="flex flex-col items-center gap-1 text-purple-400">
+      <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+      <span>AI</span>
+    </button>
+    <button onclick="switchPortalView('faculty')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white">
+      <i class="fa-solid fa-tower-broadcast text-sm"></i>
+      <span>Faculty</span>
+    </button>
+  </nav>
+
+  <!-- ==========================================================================
+       SCRIPTS
+       ========================================================================== -->
+  <script src="scripts/attendance-engine.js"></script>
+  <script src="scripts/biometrics.js"></script>
+  <script src="scripts/geo-lock.js"></script>
+  <script src="scripts/nebula-ai.js"></script>
+  <script src="scripts/app.js"></script>
+</body>
+</html>
